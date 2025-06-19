@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Куки</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  body {
+    background-color: #17181C;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-family: 'Lora', serif;
+    color: white;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+
+  .falling-cookies-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .falling-cookie-bg {
+    position: absolute;
+    background-image: url('cookie.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.3;
+    pointer-events: none;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes fallAndRotate {
+    from {
+      transform: translateY(0) rotate(0deg);
+      opacity: 0.3;
+    }
+    to {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0.2;
+    }
+  }
+
+  .cookie-container {
+    position: relative;
+    width: 30%;
+    max-width: 300px;
+    margin-left: 5%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+  }
+  @media (max-width: 768px) {
+    .cookie-container {
+      width: 45%;
+      margin-left: 2%;
+    }
+  }
+  @media (max-width: 480px) {
+    .cookie-container {
+      width: 60%;
+      margin-left: 5%;
+      top: 0;
+      justify-content: center;
+    }
+  }
+
+  .cookie-link {
+    display: block;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+  .cookie-link:hover {
+    transform: scale(1.05);
+  }
+  .cookie-link:active {
+    transform: scale(0.95);
+  }
+  .cookie-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .golden-cookie {
+    position: absolute;
+    width: 7vmin;
+    height: 7vmin;
+    max-width: 70px;
+    max-height: 70px;
+    background-image: url('golden_cookie.png');
+    background-size: cover;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 5;
+    opacity: 0;
+    transform: scale(0.5);
+    animation: fadeInScale 0.5s forwards, pulse 1.5s infinite alternate;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+
+  @keyframes fadeInScale {
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes pulse {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes fadeOutShrink {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+  }
+
+  .floating-cookie {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-image: url('cookie.png');
+    background-size: cover;
+    pointer-events: none;
+    opacity: 1;
+    transition: transform 1s ease-out, opacity 1s ease-out;
+    z-index: 10;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+
+  .plus-amount {
+    position: absolute;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #FFD700;
+    opacity: 0;
+    animation: fadeAndMove 1s forwards;
+    pointer-events: none;
+    z-index: 10;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.7);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .plus-one {
+    position: absolute;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: white;
+    opacity: 0;
+    animation: fadeAndMove 1s forwards;
+    pointer-events: none;
+    z-index: 10;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  @keyframes fadeAndMove {
+    from {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-50px) scale(0.8);
+      opacity: 0;
+    }
+  }
+
+  .wood-plank-left,
+  .wood-plank-right {
+    position: absolute;
+    top: 0;
+    width: 15px;
+    height: 100%;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.08) 0%, transparent 50%, rgba(0,0,0,0.08) 100%),
+      radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.05) 0%, transparent 70%),
+      linear-gradient(to right, #a08065 0%, #806045 25%, #a08065 50%, #806045 75%, #a08065 100%),
+      repeating-linear-gradient(
+        10deg,
+        rgba(0,0,0,0.1) 0px,
+        rgba(0,0,0,0.1) 1px,
+        transparent 1px,
+        transparent 10px
+      );
+    background-size:
+      100% 100%,
+      100% 100%,
+      auto,
+      100% 50px;
+    background-blend-mode: overlay, overlay, normal, normal;
+    border-left: 1px solid #705035;
+    border-right: 1px solid #705035;
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.8), 2px 0 5px rgba(0,0,0,0.5);
+    z-index: 1;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+  .wood-plank-left {
+    left: 40%;
+  }
+  .wood-plank-right {
+    right: 30%;
+  }
+
+  @media (max-width: 768px) {
+    .wood-plank-left { left: 50%; }
+    .wood-plank-right { right: 0; width: 10px;}
+  }
+  @media (max-width: 480px) {
+    .wood-plank-left { display: none; }
+    .wood-plank-right { right: 0; width: 10px; }
+  }
+
+
+  .info-panel {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 1vmin 2vmin;
+    border-radius: 0 8px 8px 0;
+    color: white;
+    font-size: 1.5vmin;
+    text-align: center;
+    z-index: 3;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    line-height: 1.2;
+    min-width: 80px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+  @media (max-width: 768px) {
+    .info-panel {
+      font-size: 2vmin;
+      padding: 1vmin 1vmin;
+    }
+  }
+  @media (max-width: 480px) {
+    .info-panel {
+      position: static;
+      transform: none;
+      width: 100%;
+      border-radius: 0;
+      flex-direction: row;
+      justify-content: space-around;
+      top: auto;
+      bottom: 0;
+      padding: 10px;
+      font-size: 1.8vmin;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
+    }
+    .info-panel p {
+        margin: 0 5px;
+    }
+  }
+
+  .info-panel p {
+    margin: 0;
+    font-family: 'Lora', serif;
+    text-transform: lowercase;
+  }
+  .info-panel .label {
+    font-weight: 400;
+  }
+  .info-panel .value {
+    font-weight: 700;
+    color: white;
+    font-size: 1.2em;
+  }
+  .info-panel .per-second-line {
+    font-size: 0.9em;
+    font-weight: 400;
+    margin-top: 5px;
+    white-space: nowrap;
+  }
+  @media (max-width: 480px) {
+    .info-panel .per-second-line {
+      margin-top: 0;
+    }
+  }
+
+  .shop-section {
+    position: absolute;
+    top: 10px;
+    right: 0;
+    width: 30%;
+    height: calc(100vh - 20px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+    box-sizing: border-box;
+    z-index: 3;
+    overflow-y: auto;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+  @media (max-width: 768px) {
+    .shop-section {
+      width: 45%;
+    }
+  }
+  @media (max-width: 480px) {
+    .shop-section {
+      position: static;
+      width: 100%;
+      height: auto;
+      flex-grow: 1;
+      padding: 0;
+    }
+  }
+
+  .shop-section h2 {
+    font-family: 'Lora', serif;
+    font-weight: 700;
+    font-size: 2em;
+    color: white;
+    text-transform: lowercase;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+    width: 100%;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  @media (max-width: 480px) {
+    .shop-section h2 {
+      display: none;
+    }
+  }
+
+
+  .shop-panel {
+    width: 90%;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-family: 'Lora', serif;
+    box-sizing: border-box;
+    min-height: 65px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+  @media (max-width: 480px) {
+    .shop-panel {
+      width: calc(100% - 20px);
+      margin: 5px 10px;
+      min-height: 50px;
+      padding: 8px 10px;
+      font-size: 0.9em;
+    }
+  }
+
+  .shop-panel:hover {
+    background-color: rgba(0, 0, 0, 0.75);
+    transform: translateY(-2px);
+  }
+  
+  .shop-panel:active {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: translateY(0);
+  }
+
+  .shop-panel.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .shop-panel .item-icon {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    object-fit: contain;
+    -webkit-user-drag: none;
+  }
+  @media (max-width: 480px) {
+    .shop-panel .item-icon {
+      width: 40px;
+      height: 40px;
+      margin-right: 5px;
+    }
+  }
+
+  .shop-panel .item-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .shop-panel .item-name {
+    font-size: 1.1em;
+    font-weight: 700;
+    text-transform: lowercase;
+    margin-bottom: 3px;
+  }
+  @media (max-width: 480px) {
+    .shop-panel .item-name {
+      font-size: 1em;
+    }
+  }
+
+  .shop-panel .item-price {
+    font-size: 1em;
+    font-weight: 400;
+    text-transform: lowercase;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+  }
+  @media (max-width: 480px) {
+    .shop-panel .item-price {
+      font-size: 0.9em;
+    }
+  }
+
+  .shop-panel .item-price img {
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+    vertical-align: middle;
+    -webkit-user-drag: none;
+  }
+  @media (max-width: 480px) {
+    .shop-panel .item-price img {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .shop-panel .item-owned {
+    font-size: 0.9em;
+    color: #ccc;
+    text-align: right;
+    margin-left: 10px;
+    white-space: nowrap;
+  }
+  @media (max-width: 480px) {
+    .shop-panel .item-owned {
+      font-size: 0.8em;
+      margin-left: 5px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="falling-cookies-container" id="falling-cookies-container"></div>
+
+<div class="cookie-container">
+  <a href="#" class="cookie-link" id="cookie-button">
+    <img src="cookie.png" alt="Куки" draggable="false">
+  </a>
+</div>
+
+<div class="wood-plank-left" id="wood-plank-left"></div>
+<div class="wood-plank-right" id="wood-plank-right"></div>
+
+<div class="info-panel" id="info-panel">
+  <p class="label">печенья:</p>
+  <p><span id="total-cookies" class="value">0</span></p>
+  <p class="per-second-line">в секунду: <span id="cookies-per-second">0</span></p>
+</div>
+
+<div class="shop-section" id="shop-section">
+  <h2>магазин</h2>
+</div>
+
+<script>
+  const cookieButton = document.getElementById('cookie-button');
+  const totalCookiesDisplay = document.getElementById('total-cookies');
+  const cookiesPerSecondDisplay = document.getElementById('cookies-per-second');
+  const infoPanel = document.getElementById('info-panel');
+  const woodPlankLeft = document.getElementById('wood-plank-left');
+  const woodPlankRight = document.getElementById('wood-plank-right');
+  const fallingCookiesContainer = document.getElementById('falling-cookies-container');
+  const mainCookie = document.querySelector('.cookie-container img'); 
+  const shopSection = document.getElementById('shop-section'); 
+
+  let totalCookies = 0;
+  let cookiesPerSecond = 0;
+  let cookiesPerClick = 1; 
+
+  let goldenCookieTimeout;
+  let currentGoldenCookie = null;
+  const GOLDEN_COOKIE_MIN_SPAWN_TIME = 10000;
+  const GOLDEN_COOKIE_MAX_SPAWN_TIME = 30000;
+  const GOLDEN_COOKIE_LIFESPAN = 5000;
+  
+  const shopItemsConfig = [
+    { id: 'auto_clicker', name: 'Авто-кликер', type: 'cps_item', basePrice: 100, cps: 0.1, owned: 0, imgSrc: 'click.png' },
+    { id: 'grandma', name: 'Бабушка', type: 'cps_item', basePrice: 1000, cps: 0.5, owned: 0, imgSrc: 'grandma.png' },
+    { id: 'farm', name: 'Ферма', type: 'cps_item', basePrice: 10000, cps: 2, owned: 0, imgSrc: 'farm.png' },
+    { id: 'mine', name: 'Шахта', type: 'cps_item', basePrice: 100000, cps: 10, owned: 0, imgSrc: 'mine.png' },
+    { id: 'factory', name: 'Фабрика', type: 'cps_item', basePrice: 1000000, cps: 50, owned: 0, imgSrc: 'factory.png' },
+    { id: 'bank', name: 'Банк', type: 'cps_item', basePrice: 10000000, cps: 200, owned: 0, imgSrc: 'bank.png' },
+    { id: 'temple', name: 'Храм', type: 'cps_item', basePrice: 100000000, cps: 1000, owned: 0, imgSrc: 'temple.png' },
+    { id: 'timeloop', name: 'Временная петля', type: 'cps_item', basePrice: 1000000000, cps: 5000, owned: 0, imgSrc: 'timeloop.png' },
+    { id: 'click_power', name: 'Усиленный Клик', type: 'click_upgrade', basePrice: 500000000, clickIncrease: 0.1, owned: 0, imgSrc: 'cookie.png' },
+  ];
+
+  let shopItems = [];
+
+  function saveGame() {
+    const gameData = {
+      totalCookies: totalCookies,
+      cookiesPerSecond: cookiesPerSecond,
+      cookiesPerClick: cookiesPerClick, 
+      shopItems: shopItems.map(item => ({ id: item.id, owned: item.owned }))
+    };
+    localStorage.setItem('cookieClickerGame', JSON.stringify(gameData));
+  }
+
+  function loadGame() {
+    const savedData = localStorage.getItem('cookieClickerGame');
+    if (savedData) {
+      const gameData = JSON.parse(savedData);
+      totalCookies = parseFloat(gameData.totalCookies) || 0;
+      cookiesPerSecond = parseFloat(gameData.cookiesPerSecond) || 0;
+      cookiesPerClick = parseFloat(gameData.cookiesPerClick) || 1; 
+      
+      shopItems = shopItemsConfig.map(configItem => {
+        const savedItem = gameData.shopItems.find(item => item.id === configItem.id);
+        return {
+          ...configItem,
+          owned: savedItem ? savedItem.owned : 0
+        };
+      });
+    } else {
+      shopItems = shopItemsConfig.map(configItem => ({ ...configItem, owned: 0 }));
+    }
+  }
+
+  function setLayoutWidths() {
+    const isMobile = window.innerWidth <= 480;
+    if (isMobile) {
+      infoPanel.style.width = '100%';
+      infoPanel.style.position = 'static';
+      infoPanel.style.transform = 'none';
+      infoPanel.style.bottom = '0';
+      infoPanel.style.top = 'auto';
+      infoPanel.style.borderRadius = '0';
+      infoPanel.style.flexDirection = 'row';
+      infoPanel.style.justifyContent = 'space-around';
+
+      shopSection.style.position = 'static';
+      shopSection.style.width = '100%';
+      shopSection.style.height = 'auto';
+      shopSection.style.flexGrow = '1';
+      shopSection.style.padding = '0';
+      shopSection.style.order = '3';
+
+      const cookieContainer = document.querySelector('.cookie-container');
+      cookieContainer.style.width = '60%';
+      cookieContainer.style.margin = 'auto';
+      cookieContainer.style.order = '1';
+      cookieContainer.style.top = '0';
+      cookieContainer.style.left = '0';
+      cookieContainer.style.position = 'relative';
+      cookieContainer.style.transform = 'translateY(0)';
+      cookieContainer.style.height = 'auto';
+      cookieContainer.style.display = 'flex';
+      cookieContainer.style.alignItems = 'center';
+      cookieContainer.style.justifyContent = 'center';
+      
+      woodPlankLeft.style.display = 'none';
+      woodPlankRight.style.display = 'none';
+
+      fallingCookiesContainer.style.left = '0';
+      fallingCookiesContainer.style.width = '100%';
+      fallingCookiesContainer.style.height = '100%';
+
+      document.body.style.flexDirection = 'column';
+      document.body.style.justifyContent = 'space-between';
+      document.body.style.alignItems = 'center';
+
+
+    } else {
+      const plankLeftRect = woodPlankLeft.getBoundingClientRect();
+      const plankRightRect = woodPlankRight.getBoundingClientRect(); 
+
+      const plankLeftEdge = plankLeftRect.left;
+      const plankRightEdge = plankRightRect.left;
+      const plankWidth = plankLeftRect.width; 
+
+      infoPanel.style.width = `${plankLeftEdge}px`;
+      infoPanel.style.position = 'absolute';
+      infoPanel.style.transform = 'translateY(-50%)';
+      infoPanel.style.top = '50%';
+      infoPanel.style.bottom = 'auto';
+      infoPanel.style.borderRadius = '0 8px 8px 0';
+      infoPanel.style.flexDirection = 'column';
+      infoPanel.style.justifyContent = 'center';
+
+      const mainCookieRect = mainCookie.getBoundingClientRect();
+      const mainCookieLeft = mainCookieRect.left;
+      const mainCookieWidth = mainCookieRect.width;
+
+      fallingCookiesContainer.style.left = `${mainCookieLeft}px`;
+      fallingCookiesContainer.style.width = `${mainCookieWidth}px`;
+      fallingCookiesContainer.style.height = '100vh';
+
+      shopSection.style.left = `${plankRightEdge + plankWidth}px`;
+      shopSection.style.width = `calc(100vw - ${shopSection.style.left})`;
+      shopSection.style.position = 'absolute';
+      shopSection.style.top = '10px';
+      shopSection.style.right = '0';
+      shopSection.style.height = 'calc(100vh - 20px)';
+      shopSection.style.flexGrow = '0';
+      shopSection.style.padding = '10px 0';
+
+      document.body.style.flexDirection = 'row';
+      document.body.style.justifyContent = 'flex-start';
+      document.body.style.alignItems = 'center';
+
+      woodPlankLeft.style.display = 'block';
+      woodPlankRight.style.display = 'block';
+
+      if (window.innerWidth <= 768) {
+        woodPlankLeft.style.left = '50%';
+        woodPlankRight.style.right = '0';
+        woodPlankRight.style.width = '10px';
+        shopSection.style.width = '45%';
+        shopSection.style.left = 'auto';
+        shopSection.style.right = '0';
+
+        document.querySelector('.cookie-container').style.width = '45%';
+        document.querySelector('.cookie-container').style.marginLeft = '2%';
+
+        infoPanel.style.width = `${woodPlankLeft.getBoundingClientRect().left}px`;
+      } else {
+        woodPlankLeft.style.left = '40%';
+        woodPlankRight.style.right = '30%';
+        woodPlankRight.style.width = '15px';
+        shopSection.style.width = '30%';
+      }
+    }
+  }
+
+  function gameTick() {
+    totalCookies += cookiesPerSecond;
+    totalCookiesDisplay.textContent = formatNumber(totalCookies); 
+  }
+
+  setInterval(() => {
+    gameTick();
+    renderShopItems(); 
+    saveGame(); 
+  }, 1000); 
+
+  function formatNumber(num, isCps = false) {
+    if (isCps && num < 1 && num > 0) {
+      return num.toFixed(1).replace(/\.0+$/, '');
+    }
+    if (num === 0 && isCps) {
+        return "0";
+    }
+    
+    const displayNum = Math.floor(num); 
+    if (displayNum >= 1000000000) {
+        return (displayNum / 1000000000).toFixed(2).replace(/\.0+$/, '') + ' млрд';
+    }
+    if (displayNum >= 1000000) {
+        return (displayNum / 1000000).toFixed(2).replace(/\.0+$/, '') + ' млн';
+    }
+    if (displayNum >= 1000) {
+        return (displayNum / 1000).toFixed(2).replace(/\.0+$/, '') + ' тыс';
+    }
+    return displayNum.toLocaleString('ru-RU');
+  }
+
+  function renderShopItems() {
+    let shopHtml = '<h2>магазин</h2>'; 
+    let needsUpdate = false;
+
+    shopItems.forEach(item => {
+      const currentPrice = Math.floor(item.basePrice * Math.pow(1.15, item.owned)); 
+      
+      const panelClass = totalCookies < currentPrice ? 'shop-panel disabled' : 'shop-panel';
+      const newPanelHtml = `
+        <img src="${item.imgSrc}" alt="${item.name}" class="item-icon" draggable="false"> 
+        <div class="item-info">
+          <span class="item-name">${item.name}</span>
+          <span class="item-price">${formatNumber(currentPrice)} <img src="cookie.png" alt="печенье" draggable="false"></span> 
+        </div>
+        <span class="item-owned">x${item.owned}</span>
+      `;
+
+      const existingPanel = shopSection.querySelector(`[data-item-id="${item.id}"]`);
+      if (!existingPanel || 
+          existingPanel.className !== panelClass ||
+          existingPanel.innerHTML.trim() !== newPanelHtml.trim()) {
+        needsUpdate = true;
+      }
+      shopHtml += `<div class="${panelClass}" data-item-id="${item.id}">${newPanelHtml}</div>`;
+    });
+
+    if (needsUpdate || shopSection.innerHTML.trim() !== shopHtml.trim()) {
+      shopSection.innerHTML = shopHtml; 
+      shopItems.forEach(item => {
+        const panel = shopSection.querySelector(`[data-item-id="${item.id}"]`);
+        if (panel) {
+          panel.addEventListener('click', () => buyItem(item.id));
+        }
+      });
+    }
+
+    const currentCpsDisplay = cookiesPerSecondDisplay.textContent;
+    const newCpsDisplay = formatNumber(cookiesPerSecond, true);
+    if (currentCpsDisplay !== newCpsDisplay) {
+      cookiesPerSecondDisplay.textContent = newCpsDisplay;
+    }
+  }
+
+  function buyItem(itemId) {
+    const item = shopItems.find(i => i.id === itemId);
+    if (!item) return;
+
+    const currentPrice = Math.floor(item.basePrice * Math.pow(1.15, item.owned));
+
+    if (totalCookies >= currentPrice) {
+      totalCookies -= currentPrice;
+      item.owned++;
+      
+      if (item.type === 'cps_item') {
+        cookiesPerSecond += item.cps; 
+      } else if (item.type === 'click_upgrade') {
+        cookiesPerClick += item.clickIncrease; 
+      }
+      
+      totalCookiesDisplay.textContent = formatNumber(totalCookies);
+      renderShopItems(); 
+      saveGame(); 
+    } else {
+      console.log('Недостаточно печенек!');
+    }
+  }
+
+  window.addEventListener('load', () => {
+    loadGame(); 
+    setLayoutWidths(); 
+    
+    totalCookiesDisplay.textContent = formatNumber(totalCookies); 
+    cookiesPerSecondDisplay.textContent = formatNumber(cookiesPerSecond, true);
+    renderShopItems(); 
+
+    saveGame(); 
+    scheduleGoldenCookieSpawn();
+  });
+
+  window.addEventListener('resize', setLayoutWidths);
+  window.addEventListener('beforeunload', saveGame);
+
+  function createFallingCookie() {
+    const cookie = document.createElement('div');
+    cookie.classList.add('falling-cookie-bg');
+    
+    const size = Math.random() * 30 + 30; 
+    cookie.style.width = `${size}px`;
+    cookie.style.height = `${size}px`;
+
+    const containerWidth = fallingCookiesContainer.offsetWidth;
+    const startX = Math.random() * (containerWidth - size);
+    cookie.style.left = `${startX}px`;
+
+    const startY = -Math.random() * window.innerHeight; 
+    cookie.style.top = `${startY}px`;
+
+    const duration = Math.random() * 15 + 10; 
+    cookie.style.animationDuration = `${duration}s`;
+
+    const rotationDegrees = Math.random() * 720 + 360; 
+    cookie.style.animationName = 'fallAndRotate';
+    cookie.style.animationDirection = Math.random() > 0.5 ? 'normal' : 'reverse'; 
+
+    fallingCookiesContainer.appendChild(cookie);
+
+    cookie.addEventListener('animationend', () => {
+      cookie.remove();
+      createFallingCookie(); 
+    });
+  }
+
+  const numberOfFallingCookies = 40; 
+  for (let i = 0; i < numberOfFallingCookies; i++) {
+    setTimeout(createFallingCookie, Math.random() * 8000); 
+  }
+
+  cookieButton.addEventListener('click', function(event) {
+    event.preventDefault();
+
+    totalCookies += cookiesPerClick; 
+    totalCookiesDisplay.textContent = formatNumber(totalCookies); 
+    renderShopItems(); 
+    saveGame(); 
+
+    const plusOne = document.createElement('div');
+    plusOne.classList.add('plus-one');
+    plusOne.textContent = `+${formatNumber(cookiesPerClick)}`;
+    plusOne.style.left = `${event.clientX}px`;
+    plusOne.style.top = `${event.clientY - 20}px`;
+    document.body.appendChild(plusOne);
+
+    plusOne.addEventListener('animationend', () => {
+      plusOne.remove();
+    });
+
+    for (let i = 0; i < 5; i++) {
+      const floatingCookie = document.createElement('div');
+      floatingCookie.classList.add('floating-cookie');
+      floatingCookie.style.left = `${event.clientX - 15}px`;
+      floatingCookie.style.top = `${event.clientY - 15}px`;
+      document.body.appendChild(floatingCookie);
+
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * 100 + 50;
+
+      const targetX = event.clientX + distance * Math.cos(angle);
+      const targetY = event.clientY + distance * Math.sin(angle);
+
+      requestAnimationFrame(() => {
+        floatingCookie.style.transform = `translate(${targetX - event.clientX + 15}px, ${targetY - event.clientY + 15}px)`;
+        floatingCookie.style.opacity = '0';
+      });
+
+      floatingCookie.addEventListener('transitionend', () => {
+        floatingCookie.remove();
+      });
+    }
+  });
+
+  function scheduleGoldenCookieSpawn() {
+    if (goldenCookieTimeout) {
+      clearTimeout(goldenCookieTimeout);
+    }
+    if (currentGoldenCookie) {
+      currentGoldenCookie.remove();
+      currentGoldenCookie = null;
+    }
+
+    const spawnDelay = Math.random() * (GOLDEN_COOKIE_MAX_SPAWN_TIME - GOLDEN_COOKIE_MIN_SPAWN_TIME) + GOLDEN_COOKIE_MIN_SPAWN_TIME;
+    goldenCookieTimeout = setTimeout(spawnGoldenCookie, spawnDelay);
+  }
+
+  function spawnGoldenCookie() {
+    if (currentGoldenCookie) {
+        return;
+    }
+
+    const goldenCookie = document.createElement('div');
+    goldenCookie.classList.add('golden-cookie');
+
+    const mainCookieRect = mainCookie.getBoundingClientRect();
+    const mainCookieCenterX = mainCookieRect.left + mainCookieRect.width / 2;
+    const mainCookieCenterY = mainCookieRect.top + mainCookieRect.height / 2;
+
+    const spawnRadius = mainCookieRect.width / 2 * 0.8;
+
+    const angle = Math.random() * Math.PI * 2;
+    const distance = Math.random() * spawnRadius;
+
+    const startX = mainCookieCenterX + distance * Math.cos(angle) - goldenCookie.offsetWidth / 2;
+    const startY = mainCookieCenterY + distance * Math.sin(angle) - goldenCookie.offsetHeight / 2;
+
+    goldenCookie.style.left = `${startX}px`;
+    goldenCookie.style.top = `${startY}px`;
+
+    document.body.appendChild(goldenCookie);
+    currentGoldenCookie = goldenCookie;
+
+    const despawnTimeout = setTimeout(() => {
+      if (goldenCookie && goldenCookie.parentNode) {
+        goldenCookie.style.animation = 'fadeOutShrink 0.5s forwards';
+        goldenCookie.addEventListener('animationend', () => {
+          goldenCookie.remove();
+          currentGoldenCookie = null;
+          scheduleGoldenCookieSpawn();
+        }, { once: true });
+      }
+    }, GOLDEN_COOKIE_LIFESPAN);
+
+    goldenCookie.addEventListener('click', (event) => {
+      clearTimeout(despawnTimeout); 
+      collectGoldenCookie(event);
+      goldenCookie.style.animation = 'fadeOutShrink 0.2s forwards';
+      goldenCookie.addEventListener('animationend', () => {
+        goldenCookie.remove();
+        currentGoldenCookie = null;
+        scheduleGoldenCookieSpawn();
+      }, { once: true });
+    });
+  }
+
+  function collectGoldenCookie(event) {
+    let earnedCookies;
+    if (cookiesPerSecond > 0) {
+      earnedCookies = cookiesPerSecond * (Math.random() * 4 + 1);
+    } else {
+      earnedCookies = Math.floor(Math.random() * 401) + 100; 
+    }
+    
+    totalCookies += earnedCookies;
+    totalCookiesDisplay.textContent = formatNumber(totalCookies);
+    renderShopItems();
+    saveGame();
+
+    const plusAmount = document.createElement('div');
+    plusAmount.classList.add('plus-amount');
+    plusAmount.textContent = `+${formatNumber(earnedCookies)}`;
+    plusAmount.style.left = `${event.clientX}px`;
+    plusAmount.style.top = `${event.clientY - 20}px`;
+    document.body.appendChild(plusAmount);
+
+    plusAmount.addEventListener('animationend', () => {
+      plusAmount.remove();
+    });
+  }
+</script>
+
+</body>
+</html>
