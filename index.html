@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Куки</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
 <style>
   html, body {
@@ -9,23 +10,41 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
   }
 
   body {
     background-color: #17181C;
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
+    flex-direction: column;
     font-family: 'Lora', serif;
     color: white;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    -webkit-user-drag: none;
-    user-drag: none;
+    touch-action: manipulation;
   }
 
+  /* Основной контейнер для десктопной версии */
+  .desktop-layout {
+    display: flex;
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Мобильная версия - вертикальный стек */
+  .mobile-layout {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Стили для падающих печенек */
   .falling-cookies-container {
     position: absolute;
     top: 0;
@@ -59,89 +78,263 @@
     }
   }
 
+  /* Контейнер основной печеньки */
   .cookie-container {
-    position: relative;
-    left: 100px; /* Изначальное положение */
-    top: -50px; /* Изначальное положение */
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     z-index: 2;
-    width: 270px; /* Фиксированный размер */
-    height: auto; /* Фиксированный размер */
+    position: relative;
+    margin: 20px 0;
   }
 
   .cookie-link {
     display: block;
     transition: transform 0.3s ease-in-out;
     cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
     user-select: none;
     -webkit-user-drag: none;
-    user-drag: none;
   }
+
   .cookie-link:hover {
     transform: scale(1.05);
   }
+
   .cookie-link:active {
     transform: scale(0.95);
   }
+
   .cookie-container img {
-    width: 270px; /* Изначальный размер */
-    height: auto;
     display: block;
     user-select: none;
     -webkit-user-drag: none;
+    touch-action: manipulation;
   }
 
-  /* Медиа-запросы для адаптации печеньки */
-  @media (max-width: 1024px) {
-    .cookie-container {
-      left: 5%;
-      top: 0;
-      width: 200px;
-    }
-    .cookie-container img {
-      width: 200px;
-    }
+  /* Деревянные планки (только для десктопа) */
+  .wood-plank-left, .wood-plank-right {
+    position: absolute;
+    top: 0;
+    width: 15px;
+    height: 100%;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.08) 0%, transparent 50%, rgba(0,0,0,0.08) 100%),
+      radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.05) 0%, transparent 70%),
+      linear-gradient(to right, #a08065 0%, #806045 25%, #a08065 50%, #806045 75%, #a08065 100%),
+      repeating-linear-gradient(
+        10deg,
+        rgba(0,0,0,0.1) 0px,
+        rgba(0,0,0,0.1) 1px,
+        transparent 1px,
+        transparent 10px
+      );
+    background-size:
+      100% 100%,
+      100% 100%,
+      auto,
+      100% 50px;
+    background-blend-mode: overlay, overlay, normal, normal;
+    border-left: 1px solid #705035;
+    border-right: 1px solid #705035;
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.8), 2px 0 5px rgba(0,0,0,0.5);
+    z-index: 1;
   }
 
-  @media (max-width: 768px) {
-    .cookie-container {
-      left: 2%;
-      width: 150px;
-    }
-    .cookie-container img {
-      width: 150px;
-    }
+  .wood-plank-left {
+    left: 504px;
   }
 
-  @media (max-width: 480px) {
-    .cookie-container {
-      position: relative;
-      left: 0;
-      top: 0;
-      margin: 20px auto; /* Центрируем и добавляем отступы */
-      width: 120px;
-      height: 120px; /* Фиксированная высота для мобильных */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-shrink: 0; /* Не сжимается */
-    }
-    .cookie-container img {
-      width: 100px; /* Меньше для мобильных */
-      height: 100px;
-      object-fit: contain;
-    }
+  .wood-plank-right {
+    right: 350px;
   }
 
+  /* Информационная панель */
+  .info-panel {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px 15px;
+    color: white;
+    font-size: 1.2em;
+    text-align: center;
+    z-index: 3;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+  }
+
+  .desktop-info-panel {
+    position: absolute;
+    top: 100px;
+    left: 0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .mobile-info-panel {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    border-radius: 0;
+    padding: 8px 0;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
+  }
+
+  .info-panel p {
+    margin: 0;
+    font-family: 'Lora', serif;
+    text-transform: lowercase;
+  }
+
+  .info-panel .label {
+    font-size: 1.1em;
+    font-weight: 400;
+  }
+
+  .info-panel .value {
+    font-weight: 700;
+    color: white;
+    font-size: 1.2em;
+  }
+
+  .info-panel .per-second-line {
+    font-size: 0.9em;
+    font-weight: 400;
+    margin-top: 5px;
+    white-space: nowrap;
+  }
+
+  .mobile-info-panel .per-second-line {
+    margin-top: 0;
+  }
+
+  /* Секция магазина */
+  .shop-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+    box-sizing: border-box;
+    z-index: 3;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .desktop-shop-section {
+    position: absolute;
+    top: 10px;
+    height: calc(100vh - 20px);
+    left: 519px;
+    right: 15px;
+  }
+
+  .mobile-shop-section {
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
+  }
+
+  .shop-section h2 {
+    font-family: 'Lora', serif;
+    font-weight: 700;
+    font-size: 2em;
+    color: white;
+    text-transform: lowercase;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .mobile-shop-section h2 {
+    display: none;
+  }
+
+  .shop-panel {
+    width: 90%;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-family: 'Lora', serif;
+    box-sizing: border-box;
+    min-height: 65px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  }
+
+  .shop-panel:hover {
+    background-color: rgba(0, 0, 0, 0.75);
+    transform: translateY(-2px);
+  }
+  
+  .shop-panel:active {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: translateY(0);
+  }
+
+  .shop-panel.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .shop-panel .item-icon {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    object-fit: contain;
+  }
+
+  .shop-panel .item-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .shop-panel .item-name {
+    font-size: 1.1em;
+    font-weight: 700;
+    text-transform: lowercase;
+    margin-bottom: 3px;
+  }
+
+  .shop-panel .item-price {
+    font-size: 1em;
+    font-weight: 400;
+    text-transform: lowercase;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+  }
+
+  .shop-panel .item-price img {
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+
+  .shop-panel .item-owned {
+    font-size: 0.9em;
+    color: #ccc;
+    text-align: right;
+    margin-left: 10px;
+    white-space: nowrap;
+  }
+
+  /* Золотая печенька */
   .golden-cookie {
     position: absolute;
-    width: 70px; /* Изначальный размер */
-    height: 70px; /* Изначальный размер */
+    width: 70px;
+    height: 70px;
     background-image: url('golden_cookie.png');
     background-size: cover;
     border-radius: 50%;
@@ -150,25 +343,7 @@
     opacity: 0;
     transform: scale(0.5);
     animation: fadeInScale 0.5s forwards, pulse 1.5s infinite alternate;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-user-drag: none;
-    user-drag: none;
-  }
-  /* Адаптация золотой печеньки */
-  @media (max-width: 768px) {
-    .golden-cookie {
-      width: 50px;
-      height: 50px;
-    }
-  }
-  @media (max-width: 480px) {
-    .golden-cookie {
-      width: 40px;
-      height: 40px;
-    }
+    -webkit-tap-highlight-color: transparent;
   }
 
   @keyframes fadeInScale {
@@ -198,6 +373,7 @@
     }
   }
 
+  /* Плавающие печеньки при клике */
   .floating-cookie {
     position: absolute;
     width: 30px;
@@ -208,62 +384,30 @@
     opacity: 1;
     transition: transform 1s ease-out, opacity 1s ease-out;
     z-index: 10;
+  }
+
+  /* Анимация +N при клике */
+  .plus-amount, .plus-one {
+    position: absolute;
+    font-size: 1.8em;
+    font-weight: bold;
+    opacity: 0;
+    animation: fadeAndMove 1s forwards;
+    pointer-events: none;
+    z-index: 10;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    -webkit-user-drag: none;
-    user-drag: none;
-  }
-  /* Адаптация плавающих печенек */
-  @media (max-width: 480px) {
-    .floating-cookie {
-      width: 20px;
-      height: 20px;
-    }
   }
 
   .plus-amount {
-    position: absolute;
-    font-size: 1.8em;
-    font-weight: bold;
     color: #FFD700;
-    opacity: 0;
-    animation: fadeAndMove 1s forwards;
-    pointer-events: none;
-    z-index: 10;
     text-shadow: 0 0 5px rgba(255, 215, 0, 0.7);
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-  /* Адаптация текста +кол-во */
-  @media (max-width: 480px) {
-    .plus-amount {
-      font-size: 1.2em;
-    }
   }
 
   .plus-one {
-    position: absolute;
-    font-size: 1.8em;
-    font-weight: bold;
     color: white;
-    opacity: 0;
-    animation: fadeAndMove 1s forwards;
-    pointer-events: none;
-    z-index: 10;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-  /* Адаптация текста +1 */
-  @media (max-width: 480px) {
-    .plus-one {
-      font-size: 1.2em;
-    }
   }
 
   @keyframes fadeAndMove {
@@ -277,338 +421,71 @@
     }
   }
 
-  .wood-plank-left {
-    position: absolute;
-    left: 504px; /* Изначальное положение */
-    top: 0;
-    width: 15px;
-    height: 100%;
-    background:
-      linear-gradient(180deg, rgba(0,0,0,0.08) 0%, transparent 50%, rgba(0,0,0,0.08) 100%),
-      radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.05) 0%, transparent 70%),
-      linear-gradient(to right, #a08065 0%, #806045 25%, #a08065 50%, #806045 75%, #a08065 100%),
-      repeating-linear-gradient(
-        10deg,
-        rgba(0,0,0,0.1) 0px,
-        rgba(0,0,0,0.1) 1px,
-        transparent 1px,
-        transparent 10px
-      );
-    background-size:
-      100% 100%,
-      100% 100%,
-      auto,
-      100% 50px;
-    background-blend-mode: overlay, overlay, normal, normal;
-    border-left: 1px solid #705035;
-    border-right: 1px solid #705035;
-    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.8), 2px 0 5px rgba(0,0,0,0.5);
-    z-index: 1;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-user-drag: none;
-    user-drag: none;
-  }
-
-  .wood-plank-right {
-    position: absolute;
-    right: 350px; /* Изначальное положение */
-    top: 0;
-    width: 15px;
-    height: 100%;
-    background:
-      linear-gradient(180deg, rgba(0,0,0,0.08) 0%, transparent 50%, rgba(0,0,0,0.08) 100%),
-      radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.05) 0%, transparent 70%),
-      linear-gradient(to right, #a08065 0%, #806045 25%, #a08065 50%, #806045 75%, #a08065 100%),
-      repeating-linear-gradient(
-        10deg,
-        rgba(0,0,0,0.1) 0px,
-        rgba(0,0,0,0.1) 1px,
-        transparent 1px,
-        transparent 10px
-      );
-    background-size:
-      100% 100%,
-      100% 100%,
-      auto,
-      100% 50px;
-    background-blend-mode: overlay, overlay, normal, normal;
-    border-left: 1px solid #705035;
-    border-right: 1px solid #705035;
-    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.8), 2px 0 5px rgba(0,0,0,0.5);
-    z-index: 1;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-user-drag: none;
-    user-drag: none;
-  }
-
-  /* Медиа-запросы для планок */
+  /* Адаптивные стили */
   @media (max-width: 1024px) {
     .wood-plank-left { left: 450px; }
     .wood-plank-right { right: 280px; }
-  }
-  @media (max-width: 768px) {
-    .wood-plank-left { left: 350px; }
-    .wood-plank-right { right: 0; width: 10px; }
-  }
-  @media (max-width: 480px) {
-    .wood-plank-left, .wood-plank-right { display: none; }
-  }
-
-  .info-panel {
-    position: absolute;
-    top: 100px; /* Изначальное положение */
-    left: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 5px 15px; /* Изначальный размер */
-    border-radius: 0 8px 8px 0;
-    color: white;
-    font-size: 1.2em; /* Изначальный размер */
-    text-align: center;
-    z-index: 3;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    line-height: 1;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-user-drag: none;
-    user-drag: none;
-  }
-  .info-panel p {
-    margin: 0;
-    font-family: 'Lora', serif;
-    text-transform: lowercase;
-  }
-  .info-panel .label {
-    font-size: 1.1em;
-    font-weight: 400;
-  }
-  .info-panel .value {
-    font-weight: 700;
-    color: white;
-    font-size: 1.2em;
-  }
-  .info-panel .per-second-line {
-    font-size: 0.9em;
-    font-weight: 400;
-    margin-top: 5px;
-    white-space: nowrap;
-  }
-
-  /* Адаптация инфо-панели */
-  @media (max-width: 1024px) {
-    .info-panel {
-      font-size: 1.1em;
+    .desktop-shop-section { left: 465px; right: 15px; }
+    
+    .cookie-container img {
+      width: 200px;
     }
-  }
-  @media (max-width: 768px) {
-    .info-panel {
-      font-size: 1em;
-      padding: 5px 10px;
-    }
-  }
-  @media (max-width: 480px) {
-    .info-panel {
-      position: static;
-      top: auto;
-      bottom: 0;
-      width: 100%;
-      border-radius: 0;
-      flex-direction: row;
-      justify-content: space-around;
-      padding: 8px 0;
-      font-size: 0.9em;
-      box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
-      order: 2; /* Порядок для мобильной версии */
-    }
-    .info-panel p {
-        margin: 0 5px;
-    }
-    .info-panel .per-second-line {
-      margin-top: 0;
-    }
-  }
-
-
-  .shop-section {
-    position: absolute;
-    top: 10px; /* Изначальное положение */
-    height: calc(100vh - 20px); /* Изначальный размер */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 0; /* Изначальный размер */
-    box-sizing: border-box;
-    z-index: 3;
-    overflow-y: auto;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-user-drag: none;
-    user-drag: none;
-  }
-
-  .shop-section h2 {
-    font-family: 'Lora', serif;
-    font-weight: 700;
-    font-size: 2em; /* Изначальный размер */
-    color: white;
-    text-transform: lowercase;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    text-align: center;
-    width: 100%;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-  @media (max-width: 480px) {
-    .shop-section h2 {
-      display: none;
-    }
-  }
-
-  .shop-panel {
-    width: 90%; /* Изначальный размер */
-    background-color: rgba(0, 0, 0, 0.6);
-    border-radius: 8px;
-    padding: 10px 15px; /* Изначальный размер */
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-    font-family: 'Lora', serif;
-    box-sizing: border-box;
-    min-height: 65px; /* Изначальный размер */
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-user-drag: none;
-    user-drag: none;
-  }
-
-  .shop-panel:hover {
-    background-color: rgba(0, 0, 0, 0.75);
-    transform: translateY(-2px);
-  }
-  
-  .shop-panel:active {
-    background-color: rgba(0, 0, 0, 0.8);
-    transform: translateY(0);
-  }
-
-  .shop-panel.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background-color: rgba(0, 0, 0, 0.4);
-  }
-
-  .shop-panel .item-icon {
-    width: 50px; /* Изначальный размер */
-    height: 50px; /* Изначальный размер */
-    margin-right: 10px;
-    object-fit: contain;
-    -webkit-user-drag: none;
-  }
-
-  .shop-panel .item-info {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .shop-panel .item-name {
-    font-size: 1.1em; /* Изначальный размер */
-    font-weight: 700;
-    text-transform: lowercase;
-    margin-bottom: 3px;
-  }
-
-  .shop-panel .item-price {
-    font-size: 1em; /* Изначальный размер */
-    font-weight: 400;
-    text-transform: lowercase;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-  }
-
-  .shop-panel .item-price img {
-    width: 20px; /* Изначальный размер */
-    height: 20px; /* Изначальный размер */
-    margin-left: 5px;
-    vertical-align: middle;
-    -webkit-user-drag: none;
-  }
-
-  .shop-panel .item-owned {
-    font-size: 0.9em; /* Изначальный размер */
-    color: #ccc;
-    text-align: right;
-    margin-left: 10px;
-    white-space: nowrap;
-  }
-
-  /* Адаптация секции магазина */
-  @media (max-width: 1024px) {
+    
     .shop-panel {
       padding: 8px 12px;
       min-height: 60px;
     }
+    
     .shop-panel .item-icon {
       width: 45px;
       height: 45px;
     }
+    
     .shop-panel .item-name {
       font-size: 1em;
     }
+    
     .shop-panel .item-price {
       font-size: 0.9em;
     }
+    
     .shop-panel .item-price img {
       width: 18px;
       height: 18px;
     }
+    
     .shop-panel .item-owned {
       font-size: 0.8em;
     }
   }
 
   @media (max-width: 768px) {
-    .shop-section {
-      width: calc(100vw - 350px - 10px); /* Учитываем левую планку и отступ */
-      right: 0;
+    .wood-plank-left { left: 350px; }
+    .wood-plank-right { right: 0; width: 10px; }
+    .desktop-shop-section { left: 360px; }
+    
+    .cookie-container img {
+      width: 150px;
     }
+    
     .shop-panel {
       padding: 6px 10px;
       min-height: 55px;
     }
+    
     .shop-panel .item-icon {
       width: 40px;
       height: 40px;
     }
+    
     .shop-panel .item-name {
       font-size: 0.9em;
     }
+    
     .shop-panel .item-price {
       font-size: 0.8em;
     }
+    
     .shop-panel .item-price img {
       width: 16px;
       height: 16px;
@@ -616,40 +493,53 @@
   }
 
   @media (max-width: 480px) {
-    body {
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
+    .wood-plank-left, .wood-plank-right {
+      display: none;
     }
-    .shop-section {
-      position: static;
-      width: 100%;
-      height: auto;
-      flex-grow: 1;
-      order: 3; /* Порядок для мобильной версии */
-      padding: 10px 0;
-      overflow-y: auto;
+    
+    .cookie-container img {
+      width: 120px;
     }
+    
+    .golden-cookie {
+      width: 50px;
+      height: 50px;
+    }
+    
+    .floating-cookie {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .plus-amount, .plus-one {
+      font-size: 1.4em;
+    }
+    
     .shop-panel {
       width: calc(100% - 20px);
       margin: 5px 10px;
       padding: 5px 8px;
       min-height: 50px;
     }
+    
     .shop-panel .item-icon {
       width: 35px;
       height: 35px;
     }
+    
     .shop-panel .item-name {
       font-size: 0.85em;
     }
+    
     .shop-panel .item-price {
       font-size: 0.75em;
     }
+    
     .shop-panel .item-price img {
       width: 14px;
       height: 14px;
     }
+    
     .shop-panel .item-owned {
       font-size: 0.7em;
     }
@@ -660,46 +550,79 @@
 
 <div class="falling-cookies-container" id="falling-cookies-container"></div>
 
-<div class="cookie-container">
-  <a href="#" class="cookie-link" id="cookie-button">
-    <img src="cookie.png" alt="Куки" draggable="false">
-  </a>
+<div id="desktop-layout" class="desktop-layout">
+  <div class="wood-plank-left" id="wood-plank-left"></div>
+  <div class="wood-plank-right" id="wood-plank-right"></div>
+  
+  <div class="info-panel desktop-info-panel" id="info-panel">
+    <p class="label">печенька:</p>
+    <p><span id="total-cookies" class="value">0</span></p>
+    <p class="per-second-line">в секунду: <span id="cookies-per-second">0</span></p>
+  </div>
+  
+  <div class="cookie-container">
+    <a href="#" class="cookie-link" id="cookie-button">
+      <img src="cookie.png" alt="Куки" draggable="false">
+    </a>
+  </div>
+  
+  <div class="shop-section desktop-shop-section" id="shop-section">
+    <h2>магазин</h2>
+  </div>
 </div>
 
-<div class="wood-plank-left" id="wood-plank-left"></div>
-<div class="wood-plank-right" id="wood-plank-right"></div>
-
-<div class="info-panel" id="info-panel">
-  <p class="label">печенья:</p>
-  <p><span id="total-cookies" class="value">0</span></p>
-  <p class="per-second-line">в секунду: <span id="cookies-per-second">0</span></p>
-</div>
-
-<div class="shop-section" id="shop-section">
-  <h2>магазин</h2>
+<div id="mobile-layout" class="mobile-layout" style="display: none;">
+  <div class="cookie-container">
+    <a href="#" class="cookie-link" id="mobile-cookie-button">
+      <img src="cookie.png" alt="Куки" draggable="false">
+    </a>
+  </div>
+  
+  <div class="info-panel mobile-info-panel" id="mobile-info-panel">
+    <div>
+      <p class="label">печенька:</p>
+      <p><span id="mobile-total-cookies" class="value">0</span></p>
+    </div>
+    <div>
+      <p class="per-second-line">в секунду: <span id="mobile-cookies-per-second">0</span></p>
+    </div>
+  </div>
+  
+  <div class="shop-section mobile-shop-section" id="mobile-shop-section">
+    <h2>магазин</h2>
+  </div>
 </div>
 
 <script>
+  // Основные элементы
+  const desktopLayout = document.getElementById('desktop-layout');
+  const mobileLayout = document.getElementById('mobile-layout');
   const cookieButton = document.getElementById('cookie-button');
+  const mobileCookieButton = document.getElementById('mobile-cookie-button');
   const totalCookiesDisplay = document.getElementById('total-cookies');
+  const mobileTotalCookiesDisplay = document.getElementById('mobile-total-cookies');
   const cookiesPerSecondDisplay = document.getElementById('cookies-per-second');
+  const mobileCookiesPerSecondDisplay = document.getElementById('mobile-cookies-per-second');
   const infoPanel = document.getElementById('info-panel');
+  const mobileInfoPanel = document.getElementById('mobile-info-panel');
   const woodPlankLeft = document.getElementById('wood-plank-left');
   const woodPlankRight = document.getElementById('wood-plank-right');
   const fallingCookiesContainer = document.getElementById('falling-cookies-container');
   const mainCookie = document.querySelector('.cookie-container img'); 
-  const shopSection = document.getElementById('shop-section'); 
+  const shopSection = document.getElementById('shop-section');
+  const mobileShopSection = document.getElementById('mobile-shop-section');
 
+  // Игровые переменные
   let totalCookies = 0;
   let cookiesPerSecond = 0;
   let cookiesPerClick = 1; 
-
   let goldenCookieTimeout;
   let currentGoldenCookie = null;
   const GOLDEN_COOKIE_MIN_SPAWN_TIME = 10000;
   const GOLDEN_COOKIE_MAX_SPAWN_TIME = 30000;
   const GOLDEN_COOKIE_LIFESPAN = 5000;
   
+  // Конфигурация магазина
   const shopItemsConfig = [
     { id: 'auto_clicker', name: 'Авто-кликер', type: 'cps_item', basePrice: 100, cps: 0.1, owned: 0, imgSrc: 'click.png' },
     { id: 'grandma', name: 'Бабушка', type: 'cps_item', basePrice: 1000, cps: 0.5, owned: 0, imgSrc: 'grandma.png' },
@@ -714,11 +637,12 @@
 
   let shopItems = [];
 
+  // Сохранение и загрузка игры
   function saveGame() {
     const gameData = {
       totalCookies: totalCookies,
       cookiesPerSecond: cookiesPerSecond,
-      cookiesPerClick: cookiesPerClick, 
+      cookiesPerClick: cookiesPerClick,
       shopItems: shopItems.map(item => ({ id: item.id, owned: item.owned }))
     };
     localStorage.setItem('cookieClickerGame', JSON.stringify(gameData));
@@ -730,7 +654,7 @@
       const gameData = JSON.parse(savedData);
       totalCookies = parseFloat(gameData.totalCookies) || 0;
       cookiesPerSecond = parseFloat(gameData.cookiesPerSecond) || 0;
-      cookiesPerClick = parseFloat(gameData.cookiesPerClick) || 1; 
+      cookiesPerClick = parseFloat(gameData.cookiesPerClick) || 1;
       
       shopItems = shopItemsConfig.map(configItem => {
         const savedItem = gameData.shopItems.find(item => item.id === configItem.id);
@@ -744,146 +668,49 @@
     }
   }
 
-  function setLayoutWidths() {
-    const isMobile = window.innerWidth <= 480;
+  // Установка макета в зависимости от размера экрана
+  function setLayout() {
+    const isMobile = window.innerWidth <= 768;
+    
     if (isMobile) {
-      document.body.style.flexDirection = 'column';
-      document.body.style.justifyContent = 'flex-start';
-      document.body.style.alignItems = 'center';
-
-      infoPanel.style.position = 'static';
-      infoPanel.style.transform = 'none';
-      infoPanel.style.bottom = '0';
-      infoPanel.style.top = 'auto';
-      infoPanel.style.width = '100%';
-      infoPanel.style.borderRadius = '0';
-      infoPanel.style.flexDirection = 'row';
-      infoPanel.style.justifyContent = 'space-around';
-      infoPanel.style.order = '2';
-
-      shopSection.style.position = 'static';
-      shopSection.style.width = '100%';
-      shopSection.style.height = 'auto';
-      shopSection.style.flexGrow = '1';
-      shopSection.style.padding = '10px 0';
-      shopSection.style.order = '3';
-
-      const cookieContainer = document.querySelector('.cookie-container');
-      cookieContainer.style.position = 'relative';
-      cookieContainer.style.left = '0';
-      cookieContainer.style.top = '0';
-      cookieContainer.style.margin = '20px auto';
-      cookieContainer.style.order = '1';
-      cookieContainer.style.width = '120px';
-      cookieContainer.style.height = '120px';
-      cookieContainer.style.display = 'flex';
-      cookieContainer.style.justifyContent = 'center';
-      cookieContainer.style.alignItems = 'center';
-
-      woodPlankLeft.style.display = 'none';
-      woodPlankRight.style.display = 'none';
-
-      fallingCookiesContainer.style.left = '0';
-      fallingCookiesContainer.style.width = '100%';
-      fallingCookiesContainer.style.height = '100%';
-
-    } else {
-      document.body.style.flexDirection = 'row';
-      document.body.style.justifyContent = 'flex-start';
-      document.body.style.alignItems = 'center';
-
-      infoPanel.style.position = 'absolute';
-      infoPanel.style.top = '100px';
-      infoPanel.style.left = '0';
-      infoPanel.style.width = 'auto'; /* Будет установлено в JS по позиции планки */
-      infoPanel.style.transform = 'translateY(0)';
-      infoPanel.style.bottom = 'auto';
-      infoPanel.style.borderRadius = '0 8px 8px 0';
-      infoPanel.style.flexDirection = 'column';
-      infoPanel.style.justifyContent = 'center';
-      infoPanel.style.order = '0'; /* Сброс порядка */
-
-      shopSection.style.position = 'absolute';
-      shopSection.style.top = '10px';
-      shopSection.style.height = 'calc(100vh - 20px)';
-      shopSection.style.flexGrow = '0';
-      shopSection.style.padding = '10px 0';
-      shopSection.style.order = '0'; /* Сброс порядка */
-
-      const cookieContainer = document.querySelector('.cookie-container');
-      cookieContainer.style.position = 'relative';
-      cookieContainer.style.top = '-50px';
-      cookieContainer.style.margin = '0';
-      cookieContainer.style.order = '0'; /* Сброс порядка */
-      cookieContainer.style.width = '270px';
-      cookieContainer.style.height = 'auto';
-      cookieContainer.style.display = 'flex';
-      cookieContainer.style.justifyContent = 'flex-start';
-      cookieContainer.style.alignItems = 'center';
+      desktopLayout.style.display = 'none';
+      mobileLayout.style.display = 'flex';
       
-      woodPlankLeft.style.display = 'block';
-      woodPlankRight.style.display = 'block';
-
+      // Обновляем размеры падающих печенек для мобильной версии
+      const cookieRect = document.querySelector('.cookie-container').getBoundingClientRect();
+      fallingCookiesContainer.style.left = `${cookieRect.left}px`;
+      fallingCookiesContainer.style.width = `${cookieRect.width}px`;
+    } else {
+      desktopLayout.style.display = 'flex';
+      mobileLayout.style.display = 'none';
+      
+      // Обновляем размеры падающих печенек для десктопной версии
+      const cookieRect = document.querySelector('.cookie-container').getBoundingClientRect();
+      fallingCookiesContainer.style.left = `${cookieRect.left}px`;
+      fallingCookiesContainer.style.width = `${cookieRect.width}px`;
+      
+      // Позиционируем инфо-панель относительно левой планки
       const plankLeftRect = woodPlankLeft.getBoundingClientRect();
-      const plankRightRect = woodPlankRight.getBoundingClientRect(); 
-
-      const plankLeftEdge = plankLeftRect.left;
-      const plankRightEdge = plankRightRect.left;
-      const plankWidth = plankLeftRect.width; 
-
-      infoPanel.style.width = `${plankLeftEdge}px`;
-
-      const mainCookieRect = mainCookie.getBoundingClientRect();
-      const mainCookieLeft = mainCookieRect.left;
-      const mainCookieWidth = mainCookieRect.width;
-
-      fallingCookiesContainer.style.left = `${mainCookieLeft}px`;
-      fallingCookiesContainer.style.width = `${mainCookieWidth}px`;
-      fallingCookiesContainer.style.height = '100vh';
-
-      shopSection.style.left = `${plankRightEdge + plankWidth}px`;
-      shopSection.style.width = `calc(100vw - ${shopSection.style.left})`;
+      infoPanel.style.width = `${plankLeftRect.left}px`;
+      
+      // Позиционируем магазин относительно правой планки
+      const plankRightRect = woodPlankRight.getBoundingClientRect();
+      shopSection.style.left = `${plankRightRect.left + plankRightRect.width}px`;
+      shopSection.style.width = `calc(100vw - ${plankRightRect.left + plankRightRect.width}px)`;
     }
-
-    if (window.innerWidth > 480) { /* Адаптация для планшетов и ПК, если не мобильный */
-      if (window.innerWidth <= 1024) {
-        document.querySelector('.cookie-container').style.left = '5%';
-        document.querySelector('.cookie-container').style.width = '200px';
-        document.querySelector('.cookie-container img').style.width = '200px';
-        woodPlankLeft.style.left = '450px';
-        woodPlankRight.style.right = '280px';
-      } else {
-        document.querySelector('.cookie-container').style.left = '100px';
-        document.querySelector('.cookie-container').style.width = '270px';
-        document.querySelector('.cookie-container img').style.width = '270px';
-        woodPlankLeft.style.left = '504px';
-        woodPlankRight.style.right = '350px';
-      }
-
-      if (window.innerWidth <= 768) {
-        document.querySelector('.cookie-container').style.left = '2%';
-        document.querySelector('.cookie-container').style.width = '150px';
-        document.querySelector('.cookie-container img').style.width = '150px';
-        woodPlankLeft.style.left = '350px';
-        woodPlankRight.style.right = '0';
-        woodPlankRight.style.width = '10px';
-        shopSection.style.width = `calc(100vw - ${woodPlankLeft.getBoundingClientRect().right}px)`;
-        shopSection.style.left = `${woodPlankLeft.getBoundingClientRect().right}px`;
-      }
-    }
+    
+    // Обновляем отображение данных
+    updateDisplays();
   }
 
+  // Игровой цикл
   function gameTick() {
     totalCookies += cookiesPerSecond;
-    totalCookiesDisplay.textContent = formatNumber(totalCookies); 
+    updateDisplays();
+    saveGame();
   }
 
-  setInterval(() => {
-    gameTick();
-    renderShopItems(); 
-    saveGame(); 
-  }, 1000); 
-
+  // Форматирование чисел
   function formatNumber(num, isCps = false) {
     if (isCps && num < 1 && num > 0) {
       return num.toFixed(1).replace(/\.0+$/, '');
@@ -892,7 +719,7 @@
         return "0";
     }
     
-    const displayNum = Math.floor(num); 
+    const displayNum = Math.floor(num);
     if (displayNum >= 1000000000) {
         return (displayNum / 1000000000).toFixed(2).replace(/\.0+$/, '') + ' млрд';
     }
@@ -905,49 +732,58 @@
     return displayNum.toLocaleString('ru-RU');
   }
 
-  function renderShopItems() {
-    let shopHtml = '<h2>магазин</h2>'; 
-    let needsUpdate = false;
+  // Обновление отображения данных
+  function updateDisplays() {
+    const formattedTotal = formatNumber(totalCookies);
+    const formattedCps = formatNumber(cookiesPerSecond, true);
+    
+    totalCookiesDisplay.textContent = formattedTotal;
+    mobileTotalCookiesDisplay.textContent = formattedTotal;
+    cookiesPerSecondDisplay.textContent = formattedCps;
+    mobileCookiesPerSecondDisplay.textContent = formattedCps;
+  }
 
+  // Рендер магазина
+  function renderShopItems() {
+    let shopHtml = '<h2>магазин</h2>';
+    let mobileShopHtml = '<h2>магазин</h2>';
+    
     shopItems.forEach(item => {
-      const currentPrice = Math.floor(item.basePrice * Math.pow(1.15, item.owned)); 
-      
+      const currentPrice = Math.floor(item.basePrice * Math.pow(1.15, item.owned));
       const panelClass = totalCookies < currentPrice ? 'shop-panel disabled' : 'shop-panel';
-      const newPanelHtml = `
-        <img src="${item.imgSrc}" alt="${item.name}" class="item-icon" draggable="false"> 
+      
+      const panelHtml = `
+        <img src="${item.imgSrc}" alt="${item.name}" class="item-icon" draggable="false">
         <div class="item-info">
           <span class="item-name">${item.name}</span>
-          <span class="item-price">${formatNumber(currentPrice)} <img src="cookie.png" alt="печенье" draggable="false"></span> 
+          <span class="item-price">${formatNumber(currentPrice)} <img src="cookie.png" alt="печенье" draggable="false"></span>
         </div>
         <span class="item-owned">x${item.owned}</span>
       `;
-
-      const existingPanel = shopSection.querySelector(`[data-item-id="${item.id}"]`);
-      if (!existingPanel || 
-          existingPanel.className !== panelClass ||
-          existingPanel.innerHTML.trim() !== newPanelHtml.trim()) {
-        needsUpdate = true;
-      }
-      shopHtml += `<div class="${panelClass}" data-item-id="${item.id}">${newPanelHtml}</div>`;
+      
+      shopHtml += `<div class="${panelClass}" data-item-id="${item.id}">${panelHtml}</div>`;
+      mobileShopHtml += `<div class="${panelClass}" data-item-id="${item.id}">${panelHtml}</div>`;
     });
-
-    if (needsUpdate || shopSection.innerHTML.trim() !== shopHtml.trim()) {
-      shopSection.innerHTML = shopHtml; 
-      shopItems.forEach(item => {
-        const panel = shopSection.querySelector(`[data-item-id="${item.id}"]`);
-        if (panel) {
-          panel.addEventListener('click', () => buyItem(item.id));
-        }
-      });
-    }
-
-    const currentCpsDisplay = cookiesPerSecondDisplay.textContent;
-    const newCpsDisplay = formatNumber(cookiesPerSecond, true);
-    if (currentCpsDisplay !== newCpsDisplay) {
-      cookiesPerSecondDisplay.textContent = newCpsDisplay;
-    }
+    
+    shopSection.innerHTML = shopHtml;
+    mobileShopSection.innerHTML = mobileShopHtml;
+    
+    // Добавляем обработчики событий
+    shopItems.forEach(item => {
+      const desktopPanel = shopSection.querySelector(`[data-item-id="${item.id}"]`);
+      const mobilePanel = mobileShopSection.querySelector(`[data-item-id="${item.id}"]`);
+      
+      if (desktopPanel) {
+        desktopPanel.addEventListener('click', () => buyItem(item.id));
+      }
+      
+      if (mobilePanel) {
+        mobilePanel.addEventListener('click', () => buyItem(item.id));
+      }
+    });
   }
 
+  // Покупка предмета
   function buyItem(itemId) {
     const item = shopItems.find(i => i.id === itemId);
     if (!item) return;
@@ -959,39 +795,23 @@
       item.owned++;
       
       if (item.type === 'cps_item') {
-        cookiesPerSecond += item.cps; 
+        cookiesPerSecond += item.cps;
       } else if (item.type === 'click_upgrade') {
-        cookiesPerClick += item.clickIncrease; 
+        cookiesPerClick += item.clickIncrease;
       }
       
-      totalCookiesDisplay.textContent = formatNumber(totalCookies);
-      renderShopItems(); 
-      saveGame(); 
-    } else {
-      console.log('Недостаточно печенек!');
+      updateDisplays();
+      renderShopItems();
+      saveGame();
     }
   }
 
-  window.addEventListener('load', () => {
-    loadGame(); 
-    setLayoutWidths(); 
-    
-    totalCookiesDisplay.textContent = formatNumber(totalCookies); 
-    cookiesPerSecondDisplay.textContent = formatNumber(cookiesPerSecond, true);
-    renderShopItems(); 
-
-    saveGame(); 
-    scheduleGoldenCookieSpawn();
-  });
-
-  window.addEventListener('resize', setLayoutWidths);
-  window.addEventListener('beforeunload', saveGame);
-
+  // Создание падающих печенек
   function createFallingCookie() {
     const cookie = document.createElement('div');
     cookie.classList.add('falling-cookie-bg');
     
-    const size = Math.random() * 30 + 30; 
+    const size = Math.random() * 30 + 30;
     cookie.style.width = `${size}px`;
     cookie.style.height = `${size}px`;
 
@@ -999,37 +819,34 @@
     const startX = Math.random() * (containerWidth - size);
     cookie.style.left = `${startX}px`;
 
-    const startY = -Math.random() * window.innerHeight; 
+    const startY = -Math.random() * window.innerHeight;
     cookie.style.top = `${startY}px`;
 
-    const duration = Math.random() * 15 + 10; 
+    const duration = Math.random() * 15 + 10;
     cookie.style.animationDuration = `${duration}s`;
 
-    const rotationDegrees = Math.random() * 720 + 360; 
+    const rotationDegrees = Math.random() * 720 + 360;
     cookie.style.animationName = 'fallAndRotate';
-    cookie.style.animationDirection = Math.random() > 0.5 ? 'normal' : 'reverse'; 
+    cookie.style.animationDirection = Math.random() > 0.5 ? 'normal' : 'reverse';
 
     fallingCookiesContainer.appendChild(cookie);
 
     cookie.addEventListener('animationend', () => {
       cookie.remove();
-      createFallingCookie(); 
+      createFallingCookie();
     });
   }
 
-  const numberOfFallingCookies = 40; 
-  for (let i = 0; i < numberOfFallingCookies; i++) {
-    setTimeout(createFallingCookie, Math.random() * 8000); 
-  }
-
-  cookieButton.addEventListener('click', function(event) {
+  // Обработка клика по печеньке
+  function handleCookieClick(event) {
     event.preventDefault();
-
-    totalCookies += cookiesPerClick; 
-    totalCookiesDisplay.textContent = formatNumber(totalCookies); 
-    renderShopItems(); 
-    saveGame(); 
-
+    
+    // Добавляем печеньки
+    totalCookies += cookiesPerClick;
+    updateDisplays();
+    saveGame();
+    
+    // Показываем +N
     const plusOne = document.createElement('div');
     plusOne.classList.add('plus-one');
     plusOne.textContent = `+${formatNumber(cookiesPerClick)}`;
@@ -1041,6 +858,7 @@
       plusOne.remove();
     });
 
+    // Создаем летающие печеньки
     for (let i = 0; i < 5; i++) {
       const floatingCookie = document.createElement('div');
       floatingCookie.classList.add('floating-cookie');
@@ -1063,8 +881,9 @@
         floatingCookie.remove();
       });
     }
-  });
+  }
 
+  // Золотая печенька
   function scheduleGoldenCookieSpawn() {
     if (goldenCookieTimeout) {
       clearTimeout(goldenCookieTimeout);
@@ -1116,7 +935,7 @@
     }, GOLDEN_COOKIE_LIFESPAN);
 
     goldenCookie.addEventListener('click', (event) => {
-      clearTimeout(despawnTimeout); 
+      clearTimeout(despawnTimeout);
       collectGoldenCookie(event);
       goldenCookie.style.animation = 'fadeOutShrink 0.2s forwards';
       goldenCookie.addEventListener('animationend', () => {
@@ -1132,12 +951,11 @@
     if (cookiesPerSecond > 0) {
       earnedCookies = cookiesPerSecond * (Math.random() * 4 + 1);
     } else {
-      earnedCookies = Math.floor(Math.random() * 401) + 100; 
+      earnedCookies = Math.floor(Math.random() * 401) + 100;
     }
     
     totalCookies += earnedCookies;
-    totalCookiesDisplay.textContent = formatNumber(totalCookies);
-    renderShopItems();
+    updateDisplays();
     saveGame();
 
     const plusAmount = document.createElement('div');
@@ -1151,6 +969,36 @@
       plusAmount.remove();
     });
   }
+
+  // Инициализация игры
+  function initGame() {
+    loadGame();
+    setLayout();
+    renderShopItems();
+    
+    // Создаем падающие печеньки
+    const numberOfFallingCookies = 40;
+    for (let i = 0; i < numberOfFallingCookies; i++) {
+      setTimeout(createFallingCookie, Math.random() * 8000);
+    }
+    
+    // Запускаем игровой цикл
+    setInterval(gameTick, 1000);
+    
+    // Назначаем обработчики кликов
+    cookieButton.addEventListener('click', handleCookieClick);
+    mobileCookieButton.addEventListener('click', handleCookieClick);
+    
+    // Запускаем золотую печеньку
+    scheduleGoldenCookieSpawn();
+    
+    // Сохраняем игру при закрытии
+    window.addEventListener('beforeunload', saveGame);
+  }
+
+  // Запускаем игру при загрузке страницы
+  window.addEventListener('load', initGame);
+  window.addEventListener('resize', setLayout);
 </script>
 
 </body>
