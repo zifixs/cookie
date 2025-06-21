@@ -27,7 +27,6 @@
     touch-action: manipulation;
   }
 
-  /* Основной контейнер для десктопной версии */
   .desktop-layout {
     display: flex;
     flex: 1;
@@ -35,7 +34,6 @@
     overflow: hidden;
   }
 
-  /* Мобильная версия - вертикальный стек */
   .mobile-layout {
     display: flex;
     flex-direction: column;
@@ -44,7 +42,6 @@
     overflow: hidden;
   }
 
-  /* Стили для падающих печенек */
   .falling-cookies-container {
     position: absolute;
     top: 0;
@@ -78,7 +75,6 @@
     }
   }
 
-  /* Контейнер основной печеньки */
   .cookie-container {
     display: flex;
     flex-direction: column;
@@ -87,6 +83,15 @@
     z-index: 2;
     position: relative;
     margin: 20px 0;
+  }
+
+  .desktop-cookie-container {
+    width: 300px;
+    margin-left: 100px;
+  }
+
+  .mobile-cookie-container {
+    width: 120px;
   }
 
   .cookie-link {
@@ -112,9 +117,10 @@
     user-select: none;
     -webkit-user-drag: none;
     touch-action: manipulation;
+    width: 100%;
+    height: auto;
   }
 
-  /* Деревянные планки (только для десктопа) */
   .wood-plank-left, .wood-plank-right {
     position: absolute;
     top: 0;
@@ -144,14 +150,13 @@
   }
 
   .wood-plank-left {
-    left: 504px;
+    left: 400px;
   }
 
   .wood-plank-right {
     right: 350px;
   }
 
-  /* Информационная панель */
   .info-panel {
     background-color: rgba(0, 0, 0, 0.5);
     padding: 5px 15px;
@@ -172,6 +177,7 @@
     top: 100px;
     left: 0;
     border-radius: 0 8px 8px 0;
+    width: 400px;
   }
 
   .mobile-info-panel {
@@ -211,7 +217,6 @@
     margin-top: 0;
   }
 
-  /* Секция магазина */
   .shop-section {
     display: flex;
     flex-direction: column;
@@ -227,8 +232,8 @@
     position: absolute;
     top: 10px;
     height: calc(100vh - 20px);
-    left: 519px;
-    right: 15px;
+    left: 415px;
+    right: 350px;
   }
 
   .mobile-shop-section {
@@ -255,7 +260,7 @@
 
   .shop-panel {
     width: 90%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: #060607;
     border-radius: 8px;
     padding: 10px 15px;
     margin-bottom: 8px;
@@ -271,19 +276,18 @@
   }
 
   .shop-panel:hover {
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: #080809;
     transform: translateY(-2px);
   }
   
   .shop-panel:active {
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: #0a0a0b;
     transform: translateY(0);
   }
 
   .shop-panel.disabled {
-    opacity: 0.5;
+    background-color: #121316;
     cursor: not-allowed;
-    background-color: rgba(0, 0, 0, 0.4);
   }
 
   .shop-panel .item-icon {
@@ -330,7 +334,6 @@
     white-space: nowrap;
   }
 
-  /* Золотая печенька */
   .golden-cookie {
     position: absolute;
     width: 70px;
@@ -373,7 +376,6 @@
     }
   }
 
-  /* Плавающие печеньки при клике */
   .floating-cookie {
     position: absolute;
     width: 30px;
@@ -386,7 +388,6 @@
     z-index: 10;
   }
 
-  /* Анимация +N при клике */
   .plus-amount, .plus-one {
     position: absolute;
     font-size: 1.8em;
@@ -421,14 +422,14 @@
     }
   }
 
-  /* Адаптивные стили */
   @media (max-width: 1024px) {
-    .wood-plank-left { left: 450px; }
+    .wood-plank-left { left: 350px; }
     .wood-plank-right { right: 280px; }
-    .desktop-shop-section { left: 465px; right: 15px; }
+    .desktop-shop-section { left: 365px; right: 280px; }
     
-    .cookie-container img {
-      width: 200px;
+    .desktop-cookie-container {
+      width: 250px;
+      margin-left: 80px;
     }
     
     .shop-panel {
@@ -460,12 +461,13 @@
   }
 
   @media (max-width: 768px) {
-    .wood-plank-left { left: 350px; }
+    .wood-plank-left { left: 300px; }
     .wood-plank-right { right: 0; width: 10px; }
-    .desktop-shop-section { left: 360px; }
+    .desktop-shop-section { left: 310px; right: 10px; }
     
-    .cookie-container img {
-      width: 150px;
+    .desktop-cookie-container {
+      width: 200px;
+      margin-left: 50px;
     }
     
     .shop-panel {
@@ -497,8 +499,8 @@
       display: none;
     }
     
-    .cookie-container img {
-      width: 120px;
+    .mobile-cookie-container img {
+      width: 100px;
     }
     
     .golden-cookie {
@@ -560,7 +562,7 @@
     <p class="per-second-line">в секунду: <span id="cookies-per-second">0</span></p>
   </div>
   
-  <div class="cookie-container">
+  <div class="cookie-container desktop-cookie-container">
     <a href="#" class="cookie-link" id="cookie-button">
       <img src="cookie.png" alt="Куки" draggable="false">
     </a>
@@ -572,7 +574,7 @@
 </div>
 
 <div id="mobile-layout" class="mobile-layout" style="display: none;">
-  <div class="cookie-container">
+  <div class="cookie-container mobile-cookie-container">
     <a href="#" class="cookie-link" id="mobile-cookie-button">
       <img src="cookie.png" alt="Куки" draggable="false">
     </a>
@@ -594,7 +596,6 @@
 </div>
 
 <script>
-  // Основные элементы
   const desktopLayout = document.getElementById('desktop-layout');
   const mobileLayout = document.getElementById('mobile-layout');
   const cookieButton = document.getElementById('cookie-button');
@@ -612,7 +613,6 @@
   const shopSection = document.getElementById('shop-section');
   const mobileShopSection = document.getElementById('mobile-shop-section');
 
-  // Игровые переменные
   let totalCookies = 0;
   let cookiesPerSecond = 0;
   let cookiesPerClick = 1; 
@@ -622,22 +622,20 @@
   const GOLDEN_COOKIE_MAX_SPAWN_TIME = 30000;
   const GOLDEN_COOKIE_LIFESPAN = 5000;
   
-  // Конфигурация магазина
   const shopItemsConfig = [
-    { id: 'auto_clicker', name: 'Авто-кликер', type: 'cps_item', basePrice: 100, cps: 0.1, owned: 0, imgSrc: 'click.png' },
-    { id: 'grandma', name: 'Бабушка', type: 'cps_item', basePrice: 1000, cps: 0.5, owned: 0, imgSrc: 'grandma.png' },
-    { id: 'farm', name: 'Ферма', type: 'cps_item', basePrice: 10000, cps: 2, owned: 0, imgSrc: 'farm.png' },
-    { id: 'mine', name: 'Шахта', type: 'cps_item', basePrice: 100000, cps: 10, owned: 0, imgSrc: 'mine.png' },
-    { id: 'factory', name: 'Фабрика', type: 'cps_item', basePrice: 1000000, cps: 50, owned: 0, imgSrc: 'factory.png' },
-    { id: 'bank', name: 'Банк', type: 'cps_item', basePrice: 10000000, cps: 200, owned: 0, imgSrc: 'bank.png' },
-    { id: 'temple', name: 'Храм', type: 'cps_item', basePrice: 100000000, cps: 1000, owned: 0, imgSrc: 'temple.png' },
-    { id: 'timeloop', name: 'Временная петля', type: 'cps_item', basePrice: 1000000000, cps: 5000, owned: 0, imgSrc: 'timeloop.png' },
-    { id: 'click_power', name: 'Усиленный Клик', type: 'click_upgrade', basePrice: 500000000, clickIncrease: 0.1, owned: 0, imgSrc: 'cookie.png' },
+    { id: 'auto_clicker', name: 'Авто-кликер', type: 'cps_item', basePrice: 15, cps: 0.5, owned: 0, imgSrc: 'click.png' },
+    { id: 'grandma', name: 'Бабушка', type: 'cps_item', basePrice: 100, cps: 2, owned: 0, imgSrc: 'grandma.png' },
+    { id: 'farm', name: 'Ферма', type: 'cps_item', basePrice: 500, cps: 10, owned: 0, imgSrc: 'farm.png' },
+    { id: 'mine', name: 'Шахта', type: 'cps_item', basePrice: 2000, cps: 50, owned: 0, imgSrc: 'mine.png' },
+    { id: 'factory', name: 'Фабрика', type: 'cps_item', basePrice: 10000, cps: 200, owned: 0, imgSrc: 'factory.png' },
+    { id: 'bank', name: 'Банк', type: 'cps_item', basePrice: 50000, cps: 1000, owned: 0, imgSrc: 'bank.png' },
+    { id: 'temple', name: 'Храм', type: 'cps_item', basePrice: 200000, cps: 5000, owned: 0, imgSrc: 'temple.png' },
+    { id: 'timeloop', name: 'Временная петля', type: 'cps_item', basePrice: 1000000, cps: 20000, owned: 0, imgSrc: 'timeloop.png' },
+    { id: 'click_power', name: 'Усиленный Клик', type: 'click_upgrade', basePrice: 500000, clickIncrease: 1, owned: 0, imgSrc: 'cookie.png' },
   ];
 
   let shopItems = [];
 
-  // Сохранение и загрузка игры
   function saveGame() {
     const gameData = {
       totalCookies: totalCookies,
@@ -668,49 +666,26 @@
     }
   }
 
-  // Установка макета в зависимости от размера экрана
   function setLayout() {
     const isMobile = window.innerWidth <= 768;
     
     if (isMobile) {
       desktopLayout.style.display = 'none';
       mobileLayout.style.display = 'flex';
-      
-      // Обновляем размеры падающих печенек для мобильной версии
-      const cookieRect = document.querySelector('.cookie-container').getBoundingClientRect();
-      fallingCookiesContainer.style.left = `${cookieRect.left}px`;
-      fallingCookiesContainer.style.width = `${cookieRect.width}px`;
     } else {
       desktopLayout.style.display = 'flex';
       mobileLayout.style.display = 'none';
-      
-      // Обновляем размеры падающих печенек для десктопной версии
-      const cookieRect = document.querySelector('.cookie-container').getBoundingClientRect();
-      fallingCookiesContainer.style.left = `${cookieRect.left}px`;
-      fallingCookiesContainer.style.width = `${cookieRect.width}px`;
-      
-      // Позиционируем инфо-панель относительно левой планки
-      const plankLeftRect = woodPlankLeft.getBoundingClientRect();
-      infoPanel.style.width = `${plankLeftRect.left}px`;
-      
-      // Позиционируем магазин относительно правой планки
-      const plankRightRect = woodPlankRight.getBoundingClientRect();
-      shopSection.style.left = `${plankRightRect.left + plankRightRect.width}px`;
-      shopSection.style.width = `calc(100vw - ${plankRightRect.left + plankRightRect.width}px)`;
     }
     
-    // Обновляем отображение данных
     updateDisplays();
   }
 
-  // Игровой цикл
   function gameTick() {
-    totalCookies += cookiesPerSecond;
+    totalCookies += cookiesPerSecond / 10;
     updateDisplays();
     saveGame();
   }
 
-  // Форматирование чисел
   function formatNumber(num, isCps = false) {
     if (isCps && num < 1 && num > 0) {
       return num.toFixed(1).replace(/\.0+$/, '');
@@ -732,7 +707,6 @@
     return displayNum.toLocaleString('ru-RU');
   }
 
-  // Обновление отображения данных
   function updateDisplays() {
     const formattedTotal = formatNumber(totalCookies);
     const formattedCps = formatNumber(cookiesPerSecond, true);
@@ -743,14 +717,13 @@
     mobileCookiesPerSecondDisplay.textContent = formattedCps;
   }
 
-  // Рендер магазина
   function renderShopItems() {
     let shopHtml = '<h2>магазин</h2>';
     let mobileShopHtml = '<h2>магазин</h2>';
     
     shopItems.forEach(item => {
       const currentPrice = Math.floor(item.basePrice * Math.pow(1.15, item.owned));
-      const panelClass = totalCookies < currentPrice ? 'shop-panel disabled' : 'shop-panel';
+      const panelClass = totalCookies >= currentPrice ? 'shop-panel' : 'shop-panel disabled';
       
       const panelHtml = `
         <img src="${item.imgSrc}" alt="${item.name}" class="item-icon" draggable="false">
@@ -768,7 +741,6 @@
     shopSection.innerHTML = shopHtml;
     mobileShopSection.innerHTML = mobileShopHtml;
     
-    // Добавляем обработчики событий
     shopItems.forEach(item => {
       const desktopPanel = shopSection.querySelector(`[data-item-id="${item.id}"]`);
       const mobilePanel = mobileShopSection.querySelector(`[data-item-id="${item.id}"]`);
@@ -783,7 +755,6 @@
     });
   }
 
-  // Покупка предмета
   function buyItem(itemId) {
     const item = shopItems.find(i => i.id === itemId);
     if (!item) return;
@@ -806,7 +777,6 @@
     }
   }
 
-  // Создание падающих печенек
   function createFallingCookie() {
     const cookie = document.createElement('div');
     cookie.classList.add('falling-cookie-bg');
@@ -837,16 +807,13 @@
     });
   }
 
-  // Обработка клика по печеньке
   function handleCookieClick(event) {
     event.preventDefault();
     
-    // Добавляем печеньки
     totalCookies += cookiesPerClick;
     updateDisplays();
     saveGame();
     
-    // Показываем +N
     const plusOne = document.createElement('div');
     plusOne.classList.add('plus-one');
     plusOne.textContent = `+${formatNumber(cookiesPerClick)}`;
@@ -858,7 +825,6 @@
       plusOne.remove();
     });
 
-    // Создаем летающие печеньки
     for (let i = 0; i < 5; i++) {
       const floatingCookie = document.createElement('div');
       floatingCookie.classList.add('floating-cookie');
@@ -883,7 +849,6 @@
     }
   }
 
-  // Золотая печенька
   function scheduleGoldenCookieSpawn() {
     if (goldenCookieTimeout) {
       clearTimeout(goldenCookieTimeout);
@@ -970,33 +935,26 @@
     });
   }
 
-  // Инициализация игры
   function initGame() {
     loadGame();
     setLayout();
     renderShopItems();
     
-    // Создаем падающие печеньки
     const numberOfFallingCookies = 40;
     for (let i = 0; i < numberOfFallingCookies; i++) {
       setTimeout(createFallingCookie, Math.random() * 8000);
     }
     
-    // Запускаем игровой цикл
-    setInterval(gameTick, 1000);
+    setInterval(gameTick, 100);
     
-    // Назначаем обработчики кликов
     cookieButton.addEventListener('click', handleCookieClick);
     mobileCookieButton.addEventListener('click', handleCookieClick);
     
-    // Запускаем золотую печеньку
     scheduleGoldenCookieSpawn();
     
-    // Сохраняем игру при закрытии
     window.addEventListener('beforeunload', saveGame);
   }
 
-  // Запускаем игру при загрузке страницы
   window.addEventListener('load', initGame);
   window.addEventListener('resize', setLayout);
 </script>
