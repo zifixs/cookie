@@ -232,8 +232,8 @@
     position: absolute;
     top: 10px;
     height: calc(100vh - 20px);
-    left: 415px;
     right: 350px;
+    left: 415px;
   }
 
   .mobile-shop-section {
@@ -275,19 +275,23 @@
     transition: background-color 0.2s ease, transform 0.1s ease;
   }
 
-  .shop-panel:hover {
+  .shop-panel.available {
+    background-color: #060607;
+  }
+
+  .shop-panel.unavailable {
+    background-color: #121316;
+    cursor: not-allowed;
+  }
+
+  .shop-panel.available:hover {
     background-color: #080809;
     transform: translateY(-2px);
   }
   
-  .shop-panel:active {
+  .shop-panel.available:active {
     background-color: #0a0a0b;
     transform: translateY(0);
-  }
-
-  .shop-panel.disabled {
-    background-color: #121316;
-    cursor: not-allowed;
   }
 
   .shop-panel .item-icon {
@@ -723,7 +727,8 @@
     
     shopItems.forEach(item => {
       const currentPrice = Math.floor(item.basePrice * Math.pow(1.15, item.owned));
-      const panelClass = totalCookies >= currentPrice ? 'shop-panel' : 'shop-panel disabled';
+      const canAfford = totalCookies >= currentPrice;
+      const panelClass = canAfford ? 'shop-panel available' : 'shop-panel unavailable';
       
       const panelHtml = `
         <img src="${item.imgSrc}" alt="${item.name}" class="item-icon" draggable="false">
@@ -746,11 +751,21 @@
       const mobilePanel = mobileShopSection.querySelector(`[data-item-id="${item.id}"]`);
       
       if (desktopPanel) {
-        desktopPanel.addEventListener('click', () => buyItem(item.id));
+        desktopPanel.addEventListener('click', () => {
+          const currentPrice = Math.floor(item.basePrice * Math.pow(1.15, item.owned));
+          if (totalCookies >= currentPrice) {
+            buyItem(item.id);
+          }
+        });
       }
       
       if (mobilePanel) {
-        mobilePanel.addEventListener('click', () => buyItem(item.id));
+        mobilePanel.addEventListener('click', () => {
+          const currentPrice = Math.floor(item.basePrice * Math.pow(1.15, item.owned));
+          if (totalCookies >= currentPrice) {
+            buyItem(item.id);
+          }
+        });
       }
     });
   }
